@@ -45,6 +45,7 @@ class Order (models.Model):
     product =  models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
     date_created = models.DateField (auto_now_add=True,null=True)
     status = models.CharField (max_length=200,null=True, choices=STATUS) #CADA VEZ QUE CREO UNA ORDEN TIENE UN MENÚ DESPLEGABLE CON LAS OPCIONES STATUS
+    note = models.CharField (max_length=200,null=True)
 
     def __str__(self):
         return self.product.name   
