@@ -1,14 +1,39 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models.signals import post_save
 # Create your models here.
+
+class Profile (models.Model):
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    first_name = models.CharField (max_length=200,null=True, blank=True)
+    last_name = models.CharField (max_length=200,null=True, blank=True)
+    phone = models.CharField (max_length=200,null=True, blank=True)
+    
+    
+    def __str__(self) -> str:
+        return str(self.user)
+    
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+        print ('Created profile')
+post_save.connect(create_profile, sender=User)
+
+    
+def update_profile(sender, instance, created, **kwargs):
+
+    if created == False:
+        instance.profile.save()
+        print('Profile updated')
+post_save.connect(create_profile, sender=User)
 
 
 class Customer (models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField (max_length=200,null=True)
     phone = models.CharField (max_length=200,null=True)
     email = models.EmailField (max_length=200,null=True)
+    profile_pic = models.ImageField (default= 'avatar1.png', null=True, blank=True)
     date_created = models.DateField (auto_now_add=True,null=True)
     
     def __str__(self):
